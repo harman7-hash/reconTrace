@@ -52,30 +52,25 @@ func (h *Handler) HandleTrainingCallback(c *gin.Context) {
 }
 
 func (h *Handler) HandlePostMetric(c *gin.Context) {
-	// 1. Extract the API key from the HTTP Headers (Standard industry practice)
 	apiKey := c.GetHeader("X-API-Key")
 
-	// 2. Parse the incoming JSON body into our Entity struct
 	var metric server_metric
 	if err := c.ShouldBindJSON(&metric); err != nil {
-		// ShouldBindJSON automatically catches missing required fields (like server_id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON payload: " + err.Error()})
 		return
 	}
 
-	// 3. Pass the extracted data down to the Service layer
-	// Notice we pass c.Request.Context() so database queries can be cancelled if the user disconnects!
+	
 	err := h.service.RecordMetric(c.Request.Context(), apiKey, &metric)
 	if err != nil {
 		if err == ErrUnauthorized {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized access"})
 			return
 		}
-		// If it's a real database error, log it internally but return a generic 500 to the client
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error while processing metric"})
 		return
 	}
 
-	// 4. Success! Return a 201 Created response.
+	
 	c.JSON(http.StatusCreated, gin.H{"status": "Metric recorded successfully"})
 }
