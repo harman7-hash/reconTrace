@@ -2,7 +2,7 @@ package metricData
 
 import (
 	"context"
-	"dev/internal/prediction"
+	"backend/internal/prediction"
 	"encoding/json"
 	"errors"
 	"fmt"
