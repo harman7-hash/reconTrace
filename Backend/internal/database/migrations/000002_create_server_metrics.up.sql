@@ -19,5 +19,6 @@ SELECT create_hypertable(
 
 SELECT add_retention_policy(
     'server_metrics',
-    INTERVAL '30 days'
+    INTERVAL '30 days',
+    if_not_exists => TRUE
 );

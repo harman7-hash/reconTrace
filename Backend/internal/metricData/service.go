@@ -1,8 +1,8 @@
 package metricData
 
 import (
-	"context"
 	"backend/internal/prediction"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -93,7 +93,7 @@ func (s *service) ProcessTrainingCompletion(ctx context.Context, payload Trainin
 	})
 	fmt.Println(payload.FileName)
 	if err != nil {
-		return fmt.Errorf("failed to serialize task payload: %w", err)
+		return fmt.Errorf("failed to serialize a payload: %w", err)
 	}
 
 	task := asynq.NewTask(

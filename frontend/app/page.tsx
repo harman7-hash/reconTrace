@@ -1,336 +1,182 @@
-import Link from "next/link";
-import ThemeToggle from "./components/ThemeToggle";
+﻿import Link from "next/link";
+
+const statusCards = [
+  {
+    host: "host-07 / prod-east",
+    status: "WARMUP",
+    statusColor: "text-amber-400",
+    label: "baseline",
+    value: "Day 9 / 14",
+    metric: "status",
+    metricValue: "learning traffic",
+    bars: ["h-3", "h-3", "h-4", "h-6", "h-3", "h-5"],
+    barColor: "bg-amber-400",
+  },
+  {
+    host: "host-12 / staging",
+    status: "READY",
+    statusColor: "text-emerald-400",
+    label: "inference",
+    value: "Active Model",
+    metric: "anomaly score",
+    metricValue: "0.02 (Normal)",
+    bars: ["h-2", "h-3", "h-2", "h-4", "h-3", "h-5"],
+    barColor: "bg-emerald-400",
+  },
+  {
+    host: "host-03 / db-primary",
+    status: "RETRAIN",
+    statusColor: "text-sky-400",
+    label: "pipeline",
+    value: "Midnight Sync",
+    metric: "daily update",
+    metricValue: "Scheduled 00:00",
+    bars: ["h-5", "h-6", "h-4", "h-6", "h-5", "h-6"],
+    barColor: "bg-sky-400",
+  },
+];
 
 const features = [
   {
-    number: "01",
-    title: "Real-time visibility",
+    label: "/ isolation",
+    title: "A dedicated ML model per server",
     description:
-      "Track CPU, memory, disk, network, uptime, and service health from one clean operational view.",
+      "No global averages or blunt threshold rules. Every host runs its own tailored machine learning model trained exclusively on its unique workload.",
+    accent: "border-l-emerald-400",
   },
   {
-    number: "02",
-    title: "Instant anomaly signals",
+    label: "/ baseline",
+    title: "14-day zero-noise warmup",
     description:
-      "Surface unusual resource behavior before it becomes an incident with configurable thresholds and health states.",
+      "New servers undergo a 14-day observation phase to map normal operational patterns, eliminating false alarms before predictions go live.",
+    accent: "border-l-amber-400",
   },
   {
-    number: "03",
-    title: "Trace every event",
+    label: "/ adaptation",
+    title: "Daily midnight retraining",
     description:
-      "Connect infrastructure metrics with logs and service events so your team can move from signal to root cause faster.",
+      "Models automatically retrain and recalibrate every single night at midnight, seamlessly absorbing gradual traffic growth and daily system changes.",
+    accent: "border-l-sky-400",
   },
 ];
 
-const metrics = [
-  { label: "API Gateway", value: "24 ms", state: "Healthy", width: "82%" },
-  { label: "Database", value: "61%", state: "Healthy", width: "61%" },
-  { label: "Worker Pool", value: "78%", state: "Watch", width: "78%" },
+const steps = [
+  ["01 — WARMUP", "14-day data collection", "Every new server spends 14 days gathering deep metrics telemetry to build its unique behavioral baseline."],
+  ["02 — PREDICT", "Active inference", "Custom AI models run live checks against incoming telemetry, catching deviations and anomalies instantly."],
+  ["03 — RETRAIN", "Daily midnight sync", "Models update automatically every night at midnight to continuously adapt to traffic evolution without manual intervention."],
 ];
 
-export default function Home() {
+export default function ReconTracePage() {
   return (
-    <main className="site-shell">
-      <nav className="navbar">
-
-        <Link href="/" className="brand">
-          <span className="brand-mark">
-            <span />
-            <span />
-            <span />
-          </span>
-
-          <span>
-            recon<span className="brand-accent">Trace</span>
-          </span>
-        </Link>
-
-
-        <div className="nav-links">
-          <a href="#features">Features</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#stack">Architecture</a>
-        </div>
-
-
-        <div className="nav-actions">
-
-          {/* Theme toggle */}
-          <ThemeToggle />
-
-          <Link href="/login" className="nav-login">
+    <main className="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased selection:bg-amber-400 selection:text-zinc-950">
+      <div className="mx-auto max-w-6xl px-6">
+        <nav className="flex h-20 items-center justify-between border-b border-zinc-800" aria-label="Main navigation">
+          <Link className="font-bold tracking-wide text-2xl" href="#top">reconTrace</Link>
+          <div className="hidden gap-12 text-sm text-zinc-400 md:flex">
+            <Link className="transition-colors hover:text-zinc-100" href="#features">Features</Link>
+            <Link className="transition-colors hover:text-zinc-100" href="#method">Method</Link>
+            <Link className="transition-colors hover:text-zinc-100" href="#console">Get started</Link>
+          </div>
+          <Link className="justify-self-end bg-amber-400 px-5 py-3 text-sm font-medium text-zinc-950 transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400" href="/login">
             Login
           </Link>
+        </nav>
 
-          <Link
-            href="/signup"
-            className="button button-small"
-          >
-            Get started
-          </Link>
-
-        </div>
-
-      </nav>
-
-      <section className="hero">
-        <div className="hero-copy">
-          <div className="eyebrow">
-            <span className="status-dot" />
-            Infrastructure observability, simplified
-          </div>
-
-          <h1>
-            Know what your
-            <span> servers are doing.</span>
-          </h1>
-
-          <p className="hero-description">
-            reconTrace gives you a real-time operational view of your servers,
-            services, and infrastructure — without drowning your team in noise.
-          </p>
-
-          <div className="hero-actions">
-            <Link href="#get-started" className="button">
-              Start monitoring <span>→</span>
-            </Link>
-            <Link href="#how-it-works" className="button button-ghost">
-              Explore the system
-            </Link>
-          </div>
-
-          <div className="hero-meta">
-            <div>
-              <strong>99.99%</strong>
-              <span>monitoring uptime</span>
-            </div>
-            <div>
-              <strong>&lt; 1 min</strong>
-              <span>setup to first signal</span>
-            </div>
-            <div>
-              <strong>24/7</strong>
-              <span>infrastructure watch</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="hero-visual" aria-label="reconTrace monitoring dashboard preview">
-          <div className="glow" />
-          <div className="dashboard-window">
-            <div className="window-top">
-              <div className="window-dots">
-                <i />
-                <i />
-                <i />
-              </div>
-              <span>reconTrace / overview</span>
-              <span className="live-pill">
-                <b /> LIVE
-              </span>
-            </div>
-
-            <div className="dashboard-body">
-              <div className="dashboard-header">
-                <div>
-                  <span className="muted-label">INFRASTRUCTURE</span>
-                  <h3>System overview</h3>
-                </div>
-                <span className="healthy-pill">● All systems operational</span>
-              </div>
-
-              <div className="metric-grid">
-                <div className="metric-card">
-                  <span>CPU USAGE</span>
-                  <strong>42.8%</strong>
-                  <small>−4.2% from last hour</small>
-                  <div className="sparkline">
-                    <span style={{ height: "32%" }} />
-                    <span style={{ height: "48%" }} />
-                    <span style={{ height: "42%" }} />
-                    <span style={{ height: "66%" }} />
-                    <span style={{ height: "54%" }} />
-                    <span style={{ height: "73%" }} />
-                    <span style={{ height: "58%" }} />
-                    <span style={{ height: "44%" }} />
-                    <span style={{ height: "62%" }} />
-                    <span style={{ height: "50%" }} />
-                  </div>
-                </div>
-
-                <div className="metric-card">
-                  <span>MEMORY</span>
-                  <strong>7.2 GB</strong>
-                  <small>of 16 GB allocated</small>
-                  <div className="progress-track">
-                    <span style={{ width: "45%" }} />
-                  </div>
-                </div>
-
-                <div className="metric-card">
-                  <span>NETWORK</span>
-                  <strong>18.4 MB/s</strong>
-                  <small>↑ 2.8% traffic</small>
-                  <div className="network-bars">
-                    <span style={{ height: "25%" }} />
-                    <span style={{ height: "40%" }} />
-                    <span style={{ height: "33%" }} />
-                    <span style={{ height: "58%" }} />
-                    <span style={{ height: "48%" }} />
-                    <span style={{ height: "72%" }} />
-                    <span style={{ height: "62%" }} />
-                    <span style={{ height: "84%" }} />
-                  </div>
-                </div>
-              </div>
-
-              <div className="server-panel">
-                <div className="panel-heading">
-                  <span>ACTIVE SERVICES</span>
-                  <span>STATUS</span>
-                </div>
-
-                {metrics.map((metric) => (
-                  <div className="server-row" key={metric.label}>
-                    <div className="service-name">
-                      <span className="service-icon">↗</span>
-                      <div>
-                        <strong>{metric.label}</strong>
-                        <small>prod-us-east-01</small>
-                      </div>
-                    </div>
-                    <div className="service-load">
-                      <div className="mini-track">
-                        <span style={{ width: metric.width }} />
-                      </div>
-                      <span>{metric.value}</span>
-                    </div>
-                    <span
-                      className={`service-status ${
-                        metric.state === "Watch" ? "watch" : ""
-                      }`}
-                    >
-                      ● {metric.state}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="signal-strip">
-        <span>MONITOR</span>
-        <b>→</b>
-        <span>DETECT</span>
-        <b>→</b>
-        <span>TRACE</span>
-        <b>→</b>
-        <span>RESPOND</span>
-      </section>
-
-      <section className="features section" id="features">
-        <div className="section-heading">
+        <header className="grid grid-cols-1 items-center gap-10 py-16 md:py-24 lg:grid-cols-2" id="top">
           <div>
-            <span className="section-kicker">BUILT FOR OPERATIONS</span>
-            <h2>Less guessing.<br />More signal.</h2>
+            <h1 className="m-0 max-w-3xl text-5xl font-bold uppercase leading-none tracking-tight sm:text-6xl lg:text-5xl">
+              AI infrastructure monitoring, trained per host.
+            </h1>
+            <p className="mb-8 mt-7 max-w-md text-lg text-zinc-400">
+              Every server gets its own machine learning model. A 14-day warmup maps your normal traffic, followed by daily midnight retraining to prevent drift.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link className="border border-zinc-100 bg-zinc-100 px-5 py-3.5 text-sm font-medium text-zinc-950 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400" href="/signup">
+                Enter the console
+              </Link>
+              <Link className="border border-zinc-800 px-5 py-3.5 text-sm font-medium transition-colors hover:border-zinc-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400" href="#method">
+                See how it works
+              </Link>
+            </div>
           </div>
-          <p>
-            A focused monitoring layer for engineers who need to understand
-            infrastructure health quickly and act with confidence.
-          </p>
-        </div>
 
-        <div className="feature-grid">
-          {features.map((feature) => (
-            <article className="feature-card" key={feature.number}>
-              <span className="feature-number">{feature.number}</span>
-              <div className="feature-icon">
-                {feature.number === "01" && "◌"}
-                {feature.number === "02" && "⌁"}
-                {feature.number === "03" && "⌘"}
+          <div className="relative mx-auto h-96 w-full max-w-sm" role="img" aria-label="Sample host status cards showing warmup, inference, and daily midnight retraining states">
+            {statusCards.map((card, index) => (
+              <div
+                className={`absolute w-72 border border-zinc-800 bg-zinc-900 p-4 font-mono text-xs leading-relaxed shadow-xl ${index === 0 ? "left-10 top-0 z-30 -rotate-2" : index === 1 ? "left-0 top-28 z-10 rotate-2" : "left-12 top-56 z-20 -rotate-1"}`}
+                key={card.host}
+              >
+                <div className="mb-3 flex justify-between border-b border-zinc-800 pb-3 text-zinc-400">
+                  <span>{card.host}</span>
+                  <span className={`font-medium ${card.statusColor}`}>{card.status}</span>
+                </div>
+                <div className="mb-1 flex justify-between text-zinc-400"><span>{card.label}</span><span className="text-zinc-100">{card.value}</span></div>
+                <div className="flex justify-between text-zinc-400"><span>{card.metric}</span><span className="text-zinc-100">{card.metricValue}</span></div>
+                <div className="mt-3 flex h-6 items-end gap-1" aria-hidden="true">
+                  {card.bars.map((height, barIndex) => (
+                    <i className={`flex-1 ${height} ${card.barColor}`} key={`${card.host}-${barIndex}`} />
+                  ))}
+                </div>
               </div>
-              <h3>{feature.title}</h3>
-              <p>{feature.description}</p>
-              <span className="feature-arrow">↗</span>
-            </article>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </header>
 
-      <section className="workflow section" id="how-it-works">
-        <div className="workflow-copy">
-          <span className="section-kicker">FROM HOST TO INSIGHT</span>
-          <h2>One pipeline.<br />Every signal connected.</h2>
-          <p>
-            Deploy a lightweight agent on your servers, stream telemetry to
-            the Go backend, and let the Next.js dashboard turn raw metrics into
-            an operational picture.
+        <section className="border-t border-zinc-800 py-16 md:py-20" id="method">
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-amber-400">
+            // model lifecycle
           </p>
-          <div className="workflow-list">
-            <div><span>01</span><p><strong>Collect</strong> — system and service metrics</p></div>
-            <div><span>02</span><p><strong>Process</strong> — normalize and evaluate signals</p></div>
-            <div><span>03</span><p><strong>Visualize</strong> — surface health in real time</p></div>
+          <h2 className="m-0 max-w-2xl text-4xl font-bold uppercase leading-tight sm:text-5xl">
+            From 14-day baseline to daily midnight updates.
+          </h2>
+          <div className="mt-12 grid grid-cols-1 border border-zinc-800 bg-zinc-900 md:grid-cols-3">
+            {steps.map(([label, title, description], index) => (
+              <div className={`p-6 ${index < 2 ? "border-b border-zinc-800 md:border-b-0 md:border-r" : ""}`} key={label}>
+                <p className="mb-4 font-mono text-xs text-zinc-500">{label}</p>
+                <h3 className="mb-2 text-lg font-semibold">{title}</h3>
+                <p className="text-sm leading-relaxed text-zinc-400">{description}</p>
+              </div>
+            ))}
           </div>
-        </div>
+        </section>
 
-        <div className="pipeline">
-          <div className="pipeline-node">
-            <span className="node-icon">⌁</span>
-            <div><strong>Server Agent</strong><small>metrics + events</small></div>
+        <section className="border-t border-zinc-800 py-16 md:py-20" id="features">
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-amber-400">
+            // What you get
+          </p>
+          <h2 className="m-0 max-w-2xl text-4xl font-bold uppercase leading-tight sm:text-5xl">
+            Zero configuration. Tailored server intelligence.
+          </h2>
+          <div className="mt-12 grid grid-cols-1 border border-zinc-800 md:grid-cols-3">
+            {features.map((feature, index) => (
+              <article className={`border-l-4 bg-zinc-950 p-7 ${feature.accent} ${index < 2 ? "border-b border-zinc-800 md:border-b-0 md:border-r" : ""}`} key={feature.label}>
+                <p className="mb-4 font-mono text-xs text-zinc-500">{feature.label}</p>
+                <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
+                <p className="text-sm leading-relaxed text-zinc-400">{feature.description}</p>
+              </article>
+            ))}
           </div>
-          <div className="pipeline-line"><span /></div>
-          <div className="pipeline-node">
-            <span className="node-icon">◆</span>
-            <div><strong>Go Backend</strong><small>ingest + process</small></div>
-          </div>
-          <div className="pipeline-line"><span /></div>
-          <div className="pipeline-node active-node">
-            <span className="node-icon">▦</span>
-            <div><strong>reconTrace</strong><small>observe + respond</small></div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="stack section" id="stack">
-        <div className="stack-card">
-          <div>
-            <span className="section-kicker">YOUR STACK, CONNECTED</span>
-            <h2>Designed around the tools<br />you already build with.</h2>
+        <section className="border-t border-zinc-800 py-16 md:py-20" id="console">
+          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-amber-400">
+            // Get started
+          </p>
+          <h2 className="m-0 text-4xl font-bold uppercase leading-tight sm:text-5xl">
+            Deploy your first agent in under a minute.
+          </h2>
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-7">
+            <p className="max-w-sm text-sm leading-relaxed text-zinc-400">
+              One install command starts telemetry collection. reconTrace automatically begins the 14-day baseline warmup for your model.
+            </p>
+            <Link className="border border-zinc-100 bg-zinc-100 px-5 py-4 text-sm font-medium text-zinc-950 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400" href="/signup">
+              Enter the console
+            </Link>
           </div>
-          <div className="tech-list">
-            <span><b>Go</b> Backend</span>
-            <span><b>Next.js</b> Frontend</span>
-            <span><b>REST / WS</b> Transport</span>
-            <span><b>Linux</b> Hosts</span>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="cta section" id="get-started">
-        <div className="cta-inner">
-          <span className="section-kicker">START WITH VISIBILITY</span>
-          <h2>Build a calmer<br /><span>way to operate.</span></h2>
-          <p>Connect your first server and see what your infrastructure is really doing.</p>
-          <Link href="#login" className="button">
-            Enter reconTrace <span>→</span>
-          </Link>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <div className="brand">
-          <span className="brand-mark">
-            <span />
-            <span />
-            <span />
-          </span>
-          <span>recon<span className="brand-accent">Trace</span></span>
-        </div>
-        <span>Infrastructure visibility for modern engineering teams.</span>
-        <span>© {new Date().getFullYear()} reconTrace</span>
-      </footer>
+        <footer className="h-20 border-t border-zinc-800" />
+      </div>
     </main>
   );
 }
