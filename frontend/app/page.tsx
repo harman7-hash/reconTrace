@@ -103,7 +103,7 @@ export default function ReconTracePage() {
           <div className="relative mx-auto h-96 w-full max-w-sm" role="img" aria-label="Sample host status cards showing warmup, inference, and daily midnight retraining states">
             {statusCards.map((card, index) => (
               <div
-                className={`absolute w-72 border border-zinc-800 bg-zinc-900 p-4 font-mono text-xs leading-relaxed shadow-xl ${index === 0 ? "left-10 top-0 z-30 -rotate-2" : index === 1 ? "left-0 top-28 z-10 rotate-2" : "left-12 top-56 z-20 -rotate-1"}`}
+                className={`absolute w-75 border border-zinc-800 bg-zinc-900 p-4 font-mono text-xs leading-relaxed shadow-xl ${index === 0 ? "left-10 -top-3.75 z-30 -rotate-2" : index === 1 ? "left-0 top-35 z-10 rotate-2" : "left-12 top-70 z-20 rotate-2"}`}
                 key={card.host}
               >
                 <div className="mb-3 flex justify-between border-b border-zinc-800 pb-3 text-zinc-400">

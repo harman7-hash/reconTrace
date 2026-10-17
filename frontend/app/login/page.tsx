@@ -6,56 +6,53 @@ import Link from "next/link";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
-type Tone = "ok" | "watch" | "crit";
-type Row = { label: string; filled: number; value: string };
-type Host = { name: string; tone: Tone; status: string; rows: Row[] };
+type Host = {
+  host: string;
+  status: string;
+  statusColor: string;
+  label: string;
+  value: string;
+  metric: string;
+  metricValue: string;
+  bars: string[];
+  barColor: string;
+};
 
 const HOSTS: Host[] = [
   {
-    name: "host-07 / prod-east",
-    tone: "ok",
-    status: "OK",
-    rows: [
-      { label: "cpu", filled: 2, value: "34%" },
-      { label: "mem", filled: 3, value: "4.1 / 16 GB" },
-    ],
+    host: "host-07 / prod-east",
+    status: "WARMUP",
+    statusColor: "text-amber-400",
+    label: "baseline",
+    value: "Day 9 / 14",
+    metric: "status",
+    metricValue: "learning traffic",
+    bars: ["h-3", "h-3", "h-4", "h-6", "h-3", "h-5"],
+    barColor: "bg-amber-400",
   },
   {
-    name: "host-12 / api-gateway",
-    tone: "watch",
-    status: "WATCH",
-    rows: [
-      { label: "cpu", filled: 5, value: "81%" },
-      { label: "net", filled: 4, value: "12.8 MB/s" },
-    ],
+    host: "host-12 / staging",
+    status: "READY",
+    statusColor: "text-emerald-400",
+    label: "inference",
+    value: "Active Model",
+    metric: "anomaly score",
+    metricValue: "0.02 (Normal)",
+    bars: ["h-2", "h-3", "h-2", "h-4", "h-3", "h-5"],
+    barColor: "bg-emerald-400",
   },
   {
-    name: "host-03 / db-primary",
-    tone: "crit",
-    status: "CRIT",
-    rows: [
-      { label: "disk", filled: 6, value: "97.2% full" },
-      { label: "iowait", filled: 5, value: "340ms" },
-    ],
+    host: "host-03 / db-primary",
+    status: "RETRAIN",
+    statusColor: "text-sky-400",
+    label: "pipeline",
+    value: "Midnight Sync",
+    metric: "daily update",
+    metricValue: "Scheduled 00:00",
+    bars: ["h-5", "h-6", "h-4", "h-6", "h-5", "h-6"],
+    barColor: "bg-sky-400",
   },
 ];
-
-const SEGMENTS = 6;
-
-const toneStyles: Record<Tone, { badge: string; bar: string }> = {
-  ok: {
-    badge: "text-emerald-400 bg-emerald-950/60 border-emerald-800/60",
-    bar: "bg-emerald-400",
-  },
-  watch: {
-    badge: "text-amber-400 bg-amber-950/60 border-amber-800/60",
-    bar: "bg-amber-400",
-  },
-  crit: {
-    badge: "text-red-400 bg-red-950/60 border-red-800/60",
-    bar: "bg-red-400",
-  },
-};
 
 function HostCard({
   host,
@@ -64,37 +61,25 @@ function HostCard({
   host: Host;
   className?: string;
 }) {
-  const styles = toneStyles[host.tone];
-
   return (
     <div
-      className={`w-full max-w-md border border-zinc-800 bg-zinc-900/90 p-4 font-mono text-xs leading-relaxed shadow-2xl backdrop-blur-md transition-all duration-300 hover:rotate-0 hover:border-zinc-700 ${className}`}
+      className={`w-full max-w-88.75 bg-zinc-900/90 p-4 font-mono text-xs leading-relaxed transition-all duration-300 hover:rotate-0 ${className}`}
     >
-      <div className="mb-3 flex items-center justify-between border-b border-zinc-800/80 pb-2.5">
-        <span className="font-medium tracking-tight text-zinc-300">{host.name}</span>
-        <span
-          className={`border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${styles.badge}`}
-        >
-          {host.status}
-        </span>
+      <div className="mb-3 flex justify-between border-b border-zinc-800 pb-3 text-zinc-400">
+        <span>{host.host}</span>
+        <span className={`font-medium ${host.statusColor}`}>{host.status}</span>
       </div>
-
-      <div className="space-y-2.5">
-        {host.rows.map((r) => (
-          <div key={r.label} className="grid grid-cols-[44px_1fr_96px] items-center gap-3">
-            <span className="font-medium text-[11px] uppercase text-zinc-500">{r.label}</span>
-            <div className="flex items-center gap-1.5" aria-hidden="true">
-              {Array.from({ length: SEGMENTS }, (_, i) => (
-                <i
-                  key={i}
-                  className={`h-2 flex-1 -skew-x-12 transition-colors duration-200 ${
-                    i < r.filled ? styles.bar : "bg-zinc-800/80"
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-right tabular-nums text-zinc-300">{r.value}</span>
-          </div>
+      <div className="mb-1 flex justify-between text-zinc-400">
+        <span>{host.label}</span>
+        <span className="text-zinc-100">{host.value}</span>
+      </div>
+      <div className="flex justify-between text-zinc-400">
+        <span>{host.metric}</span>
+        <span className="text-zinc-100">{host.metricValue}</span>
+      </div>
+      <div className="mt-3 flex h-6 items-end gap-1" aria-hidden="true">
+        {host.bars.map((height, barIndex) => (
+          <i className={`flex-1 ${height} ${host.barColor}`} key={`${host.host}-${barIndex}`} />
         ))}
       </div>
     </div>
@@ -142,7 +127,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? `${API}/api/login` : `${API}/api/register`;
+      const endpoint = isLogin ? `${API}/api/login` : `${API}/api/signupr`;
       const payload = isLogin
         ? { email, password }
         : { username: username.trim(), email, password };
@@ -191,33 +176,32 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased selection:bg-amber-400 selection:text-zinc-950 lg:grid lg:grid-cols-2">
+    <main className="h-screen w-full bg-zinc-950 font-sans text-zinc-100 antialiased selection:bg-amber-400 selection:text-zinc-950 lg:grid lg:grid-cols-2 overflow-hidden">
       {/* Left Column: Telemetry & Host Showcase */}
       <section
         className="relative hidden flex-col justify-between overflow-hidden border-b border-zinc-800/80 p-8 lg:flex lg:border-b-0 lg:border-r lg:p-14"
         aria-hidden="true"
       >
-        {/* Subtle ambient blur glow */}
+        {/* Subtle ambient blur glow
         <div className="pointer-events-none absolute -left-20 -top-20 h-96 w-96 rounded-full bg-amber-500/5 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-emerald-500/5 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-emerald-500/5 blur-3xl" /> */}
 
         {/* Top Logo */}
-        <div className="relative z-10">
+        <div className="relative -top-7.5 -left-5 z-10">
           <Link
             href="/"
             className="inline-flex items-center gap-2.5 text-xl font-bold tracking-wide text-zinc-100 transition-colors hover:text-white"
           >
             <span>reconTrace</span>
-            {/* <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" /> */}
           </Link>
         </div>
 
         {/* Center: Live Host Cards Stack */}
-        <div className="relative z-10 my-auto flex flex-col items-center justify-center py-10">
-          <div className="relative w-full max-w-md space-y-4">
-            <HostCard host={HOSTS[0]} className="-rotate-2" />
-            <HostCard host={HOSTS[1]} className="rotate-1 -mt-2" />
-            <HostCard host={HOSTS[2]} className="-rotate-1 -mt-2" />
+        <div className="relative -top-3 z-10 my-auto flex flex-col items-center justify-center py-10">
+          <div className="relative w-full max-w-sm space-y-4">
+            <HostCard host={HOSTS[0]} className="rotate-2" />
+            <HostCard host={HOSTS[1]} className="rotate-2 -mt-5 relative -left-5" />
+            <HostCard host={HOSTS[2]} className="-rotate-2 -mt-2 relative left-5 -top-4" />
           </div>
         </div>
 
@@ -293,28 +277,41 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <form onSubmit={onSubmit} noValidate className="space-y-5">
-            {!isLogin && (
-              <div>
-                <label
-                  htmlFor="username"
-                  className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-400"
-                >
-                  Username
-                </label>
-                <input
-                  id="username"
-                  type="text"
-                  autoComplete="username"
-                  placeholder="e.g. dev_operator"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="h-11 w-full border border-zinc-800 bg-zinc-900 px-3.5 font-sans text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 transition-colors"
-                />
+          <form onSubmit={onSubmit} noValidate>
+            {/* 
+              Username Field 
+              Uses a CSS grid transition to smoothly animate from 0 height to full height.
+              This prevents sudden layout shifts and scrollbar popping.
+            */}
+            <div
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+                isLogin ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
+              }`}
+              aria-hidden={isLogin}
+            >
+              <div className="overflow-hidden">
+                <div className="mb-5">
+                  <label
+                    htmlFor="username"
+                    className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-400"
+                  >
+                    Username
+                  </label>
+                  <input
+                    id="username"
+                    type="text"
+                    autoComplete="username"
+                    placeholder="e.g. dev_operator"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    disabled={isLogin}
+                    className="h-11 w-full border border-zinc-800 bg-zinc-900 px-3.5 font-sans text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 transition-colors disabled:opacity-50"
+                  />
+                </div>
               </div>
-            )}
+            </div>
 
-            <div>
+            <div className="mb-5">
               <label
                 htmlFor="email"
                 className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-400"
@@ -332,7 +329,7 @@ export default function LoginPage() {
               />
             </div>
 
-            <div>
+            <div className="mb-5">
               <label
                 htmlFor="password"
                 className="mb-2 block font-mono text-xs uppercase tracking-wider text-zinc-400"
@@ -352,7 +349,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-0 top-0 flex h-11 items-center justify-center px-3 text-zinc-500 hover:text-zinc-300 transition-colors"
+                  className="absolute right-0 top-0 flex h-11 items-center justify-center px-3 text-zinc-500 transition-colors hover:text-zinc-300"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -390,7 +387,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between font-mono text-xs">
+            <div className="mb-5 flex items-center justify-between font-mono text-xs">
               <label className="flex cursor-pointer select-none items-center gap-2 text-zinc-400">
                 <input
                   type="checkbox"
@@ -403,7 +400,7 @@ export default function LoginPage() {
               {isLogin && (
                 <Link
                   href="/forgot-password"
-                  className="text-zinc-400 underline underline-offset-2 hover:text-zinc-200 transition-colors"
+                  className="text-zinc-400 underline underline-offset-2 transition-colors hover:text-zinc-200"
                 >
                   Forgot password?
                 </Link>
@@ -412,7 +409,7 @@ export default function LoginPage() {
 
             {error && (
               <div
-                className="flex items-start gap-2.5 border border-red-500/40 bg-red-950/40 px-3.5 py-2.5 font-mono text-xs text-red-300"
+                className="mb-5 flex items-start gap-2.5 border border-red-500/40 bg-red-950/40 px-3.5 py-2.5 font-mono text-xs text-red-300"
                 role="alert"
               >
                 <span className="font-bold text-red-400">!</span>
@@ -422,7 +419,7 @@ export default function LoginPage() {
 
             {success && (
               <div
-                className="flex items-start gap-2.5 border border-emerald-500/40 bg-emerald-950/40 px-3.5 py-2.5 font-mono text-xs text-emerald-300"
+                className="mb-5 flex items-start gap-2.5 border border-emerald-500/40 bg-emerald-950/40 px-3.5 py-2.5 font-mono text-xs text-emerald-300"
                 role="status"
               >
                 <span className="font-bold text-emerald-400">✓</span>
@@ -433,7 +430,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-11 w-full items-center justify-center bg-amber-400 font-sans text-sm font-medium tracking-wide text-zinc-950 transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mb-6 flex h-11 w-full items-center justify-center bg-amber-400 font-sans text-sm font-medium tracking-wide text-zinc-950 transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="inline-flex items-center gap-2">
@@ -466,37 +463,9 @@ export default function LoginPage() {
               )}
             </button>
 
-            <div className="relative my-6 text-center">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-zinc-800" />
-              </div>
-              <span className="relative bg-zinc-950 px-3 font-mono text-xs uppercase text-zinc-600">
-                or
-              </span>
-            </div>
+            
 
-            <button
-              type="button"
-              onClick={() => {
-                window.location.href = `${API}/auth/sso`;
-              }}
-              className="flex h-11 w-full items-center justify-center gap-2 border border-zinc-800 bg-zinc-900/60 font-sans text-sm font-medium text-zinc-200 transition hover:border-zinc-700 hover:bg-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
-            >
-              <svg
-                className="h-4 w-4 text-zinc-400"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-              <span>Continue with SSO</span>
-            </button>
+            
           </form>
         </div>
       </section>
